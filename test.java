@@ -89,10 +89,8 @@ public class test
             root.appendChild(tb);       
             
             //position arg
-
+            
         }
-
-        //for each turtlebot, set their default positions
         
 
     }
