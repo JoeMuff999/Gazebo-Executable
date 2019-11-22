@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<launch>
+    <arg default="String TURTLEBOT3_MODEL" doc="model type [burger, waffle, waffle_pi]" name="model" />
+    <arg default="tb3_0" name="1_tb3" />
+    <arg default="tb3_1" name="2_tb3" />
+    <arg default="tb3_2" name="3_tb3" />
+    <arg default="tb3_3" name="4_tb3" />
+    <arg default="tb3_4" name="5_tb3" />
+    <arg default="tb3_5" name="6_tb3" />
+    <arg default="tb3_6" name="7_tb3" />
+    <arg default="tb3_7" name="8_tb3" />
+    <arg default="tb3_8" name="9_tb3" />
+    <arg default="tb3_9" name="10_tb3" />
+</launch>

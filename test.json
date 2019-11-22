@@ -1,0 +1,6 @@
+{
+    "turtlebotModel": "burger",
+    "turtlebotCount": "1",
+    "worldFile": "empty.world",
+    "occMap": "map.yaml"
+}
