@@ -20,10 +20,16 @@ public class test
     static Element root;
     public static void main (String [] args)
     {
-        writeXML(Integer.parseInt(args[1]));
+        writeTurtlebotLaunch(Integer.parseInt(args[0]));
+        writeMapLaunch();
     }
 
-    public static void writeXML(int tBAmt)
+    public static void writeMapLaunch()
+    {
+
+    }
+
+    public static void writeTurtlebotLaunch(int tBAmt)
     {
         try{
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -33,10 +39,13 @@ public class test
             root = xmlDoc.createElement("launch");
             xmlDoc.appendChild(root);
 
-            int[][] pos = new int[tBAmt][3];
-            int[][] attitude = new int[tBAmt][3];
+            double[][] pos = new double[tBAmt][3];
+            double[][] attitude = new double[tBAmt][3];
+            String turtlebotModel = "$(env TURTLEBOT3_MODEL)"; //until I can get the input file
+            writeTurtlebots(tBAmt, turtlebotModel, pos, attitude);
+            
+            //writeTurtlebotNamespaces(tBAmt);
 
-            writeTurtlebots(tBAmt, "String TURTLEBOT3_MODEL", pos, attitude);
 
             TransformerFactory tFF = TransformerFactory.newInstance();
             Transformer tF = tFF.newTransformer();
@@ -54,7 +63,7 @@ public class test
 
     }
     /* TODO AMCL parameters --> http://wiki.ros.org/amcl#Parameters */
-    public static void writeTurtlebots(int amt, String TURTLEBOT3_MODEL, int[][] initialPositions, int[][] initialOrientations)
+    public static void writeTurtlebots(int amt, String TURTLEBOT3_MODEL, double[][] initialPositions, double[][] initialOrientations)
     {
         //standard xml format for tbModel
         //<arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
@@ -98,9 +107,17 @@ public class test
               index++;
             }
 
+            String[] attStr = new String[]{"pitch","yaw","roll"};
+            index = 0;
+            for(String s : attStr)
+            {
+              name = createAttributeHelper("name", i+1 + "_tb3_" + s);
+              def = createAttributeHelper("default", "" + initialOrientations[i][index]);
+              argElem = createElementHelper("arg", new Attr[]{name,def});
+              root.appendChild(argElem);
+              index++;
+            }
         }
-
-
     }
 
     public static Attr createAttributeHelper(String name, String value)
