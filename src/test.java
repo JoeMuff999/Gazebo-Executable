@@ -29,43 +29,52 @@ public class test {
 
     public static void main(String[] args) {
         readUserParameters();
-        writeTurtlebotLaunch(Integer.parseInt(args[0]));
-        //writeMapLaunch(CURR_DIR + "/");
-        writeMapLaunch("$(find turtlebot3_gazebo)/worlds/turtlebot3_house.world");
+        writeTurtlebotLaunch();
+        writeMapLaunch();
     }
 
-    private static void readUserParameters()
-    {
+    private static void readUserParameters() {
         try {
-            
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(CURR_DIR + "/templates/map_template.launch"), "UTF-8"));
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(CURR_DIR + "/launch/user_world.launch"), "UTF-8"));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                int index = line.indexOf(placeholder);
-                if (index != -1) {
-                    line = line.substring(0, index) + mapDir + line.substring(index + placeholder.length());
-                }
-                writer.write(line);
-            }
 
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream("/home/joey/UserApplication/parameters.txt"), "UTF-8"));
+
+            String worldDir, occGridDir, tbModel;
+            int tbAmt;
+            worldDir = reader.readLine();
+            occGridDir = reader.readLine();
+            tbModel = reader.readLine();
+            tbAmt = Integer.parseInt(reader.readLine());
+
+            double[][] pos = new double[tbAmt][3];
+            double[][] attitude = new double[tbAmt][3];
+
+            for(int i = 0; i < tbAmt; i++)
+            {
+                String line = reader.readLine();
+                String[] vals = line.split("\\s+");
+                for(int j = 0; j < 3; j++)
+                    pos[i][j] = Double.parseDouble(vals[j]);
+
+                //convert quaternion to euler
+                double[] quaternions = new double[]{Double.parseDouble(vals[3]),Double.parseDouble(vals[4]),Double.parseDouble(vals[5]),Double.parseDouble(vals[6])};
+                attitude[i] = convertQuaternionToEuler(quaternions);               
+            }
+            
             // Close to unlock.
             reader.close();
-            // Close to unlock and flush to disk.
-            writer.close();
 
-            usr = new UserParameters();
+            usr = new UserParameters(worldDir, occGridDir, tbModel, tbAmt, pos, attitude);
+
         } catch (Exception e) {
             e.printStackTrace();
-        }        
-        
+        }
+
     }
 
-    private static void writeTurtlebotLaunch(int tBAmt) {
+    private static void writeTurtlebotLaunch() {
         try {
-            //create XML doc for turtlebot launch file
+            // create XML doc for turtlebot launch file
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             xmlDoc = dBuilder.newDocument();
@@ -73,10 +82,7 @@ public class test {
             root = xmlDoc.createElement("launch");
             xmlDoc.appendChild(root);
 
-
-            String turtlebotModel = "$(env TURTLEBOT3_MODEL)"; // until I can get the input file
-
-            writeTurtlebots(tBAmt, turtlebotModel, usr.pos, usr.attitude);
+            writeTurtlebots(usr.tbAmt, usr.tbModel, usr.pos, usr.attitude);
 
             TransformerFactory tFF = TransformerFactory.newInstance();
             Transformer tF = tFF.newTransformer();
@@ -95,8 +101,8 @@ public class test {
     private static void writeTurtlebots(int amt, String TURTLEBOT3_MODEL, double[][] initialPositions,
             double[][] initialOrientations) {
 
-        //header info
-        Element tBModel = xmlDoc.createElement("arg");
+        // header info
+        Element tbModel = xmlDoc.createElement("arg");
         Attr doc = xmlDoc.createAttribute("doc");
         doc.setValue("model type [burger, waffle, waffle_pi]");
 
@@ -106,11 +112,11 @@ public class test {
         nameAttribute.setValue("model");
         defaultAttribute.setValue(TURTLEBOT3_MODEL);
 
-        tBModel.setAttributeNode(nameAttribute);
-        tBModel.setAttributeNode(defaultAttribute);
-        tBModel.setAttributeNode(doc);
+        tbModel.setAttributeNode(nameAttribute);
+        tbModel.setAttributeNode(defaultAttribute);
+        tbModel.setAttributeNode(doc);
 
-        root.appendChild(tBModel);
+        root.appendChild(tbModel);
 
         // for each turtlebot, create model arg , create position arg, and create
         // attitude arg
@@ -144,69 +150,67 @@ public class test {
             }
         }
 
-        //define namespaces for turtlebots
-        for(int i = 0; i < amt; i++)
-        {
-            //"arg" string for each tb3 (ie: "$(arg 0_tb3)")
+        // define namespaces for turtlebots
+        for (int i = 0; i < amt; i++) {
+            // "arg" string for each tb3 (ie: "$(arg 0_tb3)")
             String tbArg = "$(arg " + i + "_tb3)";
 
-            //top level namespace element
+            // top level namespace element
             Attr ns = createAttributeHelper("ns", tbArg);
-            Element nsElem = createElementHelper("group",new Attr[] {ns});
+            Element nsElem = createElementHelper("group", new Attr[] { ns });
             root.appendChild(nsElem);
 
-            //sub-element for robot urdf paramters
+            // sub-element for robot urdf paramters
             Attr name = createAttributeHelper("name", "robot_description");
-            Attr command = createAttributeHelper("command","$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro");
-            Element param = createElementHelper("param", new Attr[]{name,command});
+            Attr command = createAttributeHelper("command",
+                    "$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro");
+            Element param = createElementHelper("param", new Attr[] { name, command });
             nsElem.appendChild(param);
-            
-            //sub-element for publisher info
+
+            // sub-element for publisher info
             Attr pkg = createAttributeHelper("pkg", "robot_state_publisher");
             Attr type = createAttributeHelper("type", "robot_state_publisher");
             name = createAttributeHelper("name", "robot_state_publisher");
             Attr output = createAttributeHelper("output", "screen");
-            Element node = createElementHelper("node", new Attr[]{pkg,type,name,output});
+            Element node = createElementHelper("node", new Attr[] { pkg, type, name, output });
             nsElem.appendChild(node);
-           
-            //sub-sub-element for publisher characteristics
+
+            // sub-sub-element for publisher characteristics
             name = createAttributeHelper("name", "publish_frequency");
             type = createAttributeHelper("type", "double");
             Attr value = createAttributeHelper("value", "50.0");
-            param = createElementHelper("param", new Attr[]{name,type,value});
+            param = createElementHelper("param", new Attr[] { name, type, value });
             node.appendChild(param);
 
-            //sub-sub element for publisher tf definition
+            // sub-sub element for publisher tf definition
             name = createAttributeHelper("name", "tf_prefix");
             value = createAttributeHelper("value", tbArg);
-            param = createElementHelper("param", new Attr[]{name,value});
+            param = createElementHelper("param", new Attr[] { name, value });
             node.appendChild(param);
 
-            //sub element for gazebo arguments
+            // sub element for gazebo arguments
             name = createAttributeHelper("name", "spawn_urdf");
             pkg = createAttributeHelper("pkg", "gazebo_ros");
             type = createAttributeHelper("type", "spawn_model");
             String[] posStr = new String[] { "x", "y", "z" };
             String[] attStr = new String[] { "P", "Y", "R" };
-            String[] attStrFull = new String[] {"pitch","yaw","roll"};
+            String[] attStrFull = new String[] { "pitch", "yaw", "roll" };
             String argString = "-urdf -model " + tbArg;
-            for(int j = 0; j < 3; j++)
-            {
+            for (int j = 0; j < 3; j++) {
                 argString += " -" + posStr[j] + " $(arg " + i + "_tb3_" + posStr[j] + "_pos)";
             }
-            for(int j = 0; j < 3; j++)
-            {
+            for (int j = 0; j < 3; j++) {
                 argString += " -" + attStr[j] + " $(arg " + i + "_tb3_" + attStrFull[j] + ")";
             }
             argString += " -param robot_description";
             Attr args = createAttributeHelper("args", argString);
-            node = createElementHelper("node", new Attr[]{name,pkg,type,args});
+            node = createElementHelper("node", new Attr[] { name, pkg, type, args });
             nsElem.appendChild(node);
-            
+
         }
     }
 
-    private static void writeMapLaunch(String mapDir) {
+    private static void writeMapLaunch() {
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(new FileInputStream(CURR_DIR + "/templates/map_template.launch"), "UTF-8"));
@@ -217,7 +221,7 @@ public class test {
             while ((line = reader.readLine()) != null) {
                 int index = line.indexOf(placeholder);
                 if (index != -1) {
-                    line = line.substring(0, index) + mapDir + line.substring(index + placeholder.length());
+                    line = line.substring(0, index) + usr.worldDirectory + line.substring(index + placeholder.length());
                 }
                 writer.write(line);
             }
@@ -229,6 +233,25 @@ public class test {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static double[] convertQuaternionToEuler(double[] quaternion) {
+        double qx = quaternion[0];
+        double qy = quaternion[1];
+        double qz = quaternion[2];
+        double qw = quaternion[3];
+
+        double sqx = qx * qx;
+        double sqy = qy * qy;
+        double sqz = qz * qz;
+        double sqw = qw * qw;
+
+        double[] eulerAngle = new double[3];
+        eulerAngle[0] = Math.asin(-2.0 * (qx * qz - qy * qw) / (sqx + sqy + sqz + sqw));// pitch / attitude
+        eulerAngle[1] = Math.atan2(2.0 * (qx * qy + qz * qw), (sqx - sqy - sqz + sqw));// yaw / heading
+        eulerAngle[2] = Math.atan2(2.0 * (qy * qz + qx * qw), (-sqx - sqy + sqz + sqw));// roll / bank
+
+        return eulerAngle;
     }
 
     private static Attr createAttributeHelper(String name, String value) {
@@ -245,12 +268,22 @@ public class test {
         return elem;
     }
 
-    private class UserParameters
-    {
+    private static class UserParameters {
         String worldDirectory;
         String occupancyGridDirectory;
-        int tBAmt;
-        double[][] pos = new double[tBAmt][3];
-        double[][] attitude = new double[tBAmt][3];
+        String tbModel;
+        int tbAmt;
+        double[][] pos = new double[tbAmt][3];
+        double[][] attitude = new double[tbAmt][3];
+
+        private UserParameters(String worldDirectory, String occupancyGridDirectory, String tbModel, int tbAmt,
+                double[][] pos, double[][] attitude) {
+            this.worldDirectory = worldDirectory;
+            this.occupancyGridDirectory = occupancyGridDirectory;
+            this.tbModel = tbModel;
+            this.tbAmt = tbAmt;
+            this.pos = pos;
+            this.attitude = attitude;
+        }
     }
 }
