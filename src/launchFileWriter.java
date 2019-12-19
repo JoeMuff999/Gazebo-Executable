@@ -1,4 +1,3 @@
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -21,23 +20,28 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 
-public class test {
+public class launchFileWriter {
     static Document xmlDoc;
     static Element root;
-    static final String CURR_DIR = System.getProperty("user.dir");
+    static final String CURR_DIR = System.getProperty("java.class.path") + "/..";
     static UserParameters usr;
 
     public static void main(String[] args) {
         readUserParameters();
         writeTurtlebotLaunch();
         writeMapLaunch();
+        System.out.println("Launch files written successfully");
     }
 
+    /*
+     * method to read the user input from the Qt interface. creates a UserParameters
+     * object to store all of the users inputs
+     */
     private static void readUserParameters() {
         try {
 
             BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(new FileInputStream("/home/joey/UserApplication/parameters.txt"), "UTF-8"));
+                    new InputStreamReader(new FileInputStream(CURR_DIR + "/parameters.txt"), "UTF-8"));
 
             String worldDir, occGridDir, tbModel;
             int tbAmt;
@@ -49,18 +53,18 @@ public class test {
             double[][] pos = new double[tbAmt][3];
             double[][] attitude = new double[tbAmt][3];
 
-            for(int i = 0; i < tbAmt; i++)
-            {
+            for (int i = 0; i < tbAmt; i++) {
                 String line = reader.readLine();
                 String[] vals = line.split("\\s+");
-                for(int j = 0; j < 3; j++)
+                for (int j = 0; j < 3; j++)
                     pos[i][j] = Double.parseDouble(vals[j]);
 
-                //convert quaternion to euler
-                double[] quaternions = new double[]{Double.parseDouble(vals[3]),Double.parseDouble(vals[4]),Double.parseDouble(vals[5]),Double.parseDouble(vals[6])};
-                attitude[i] = convertQuaternionToEuler(quaternions);               
+                // convert quaternion to euler
+                double[] quaternions = new double[] { Double.parseDouble(vals[3]), Double.parseDouble(vals[4]),
+                        Double.parseDouble(vals[5]), Double.parseDouble(vals[6]) };
+                attitude[i] = convertQuaternionToEuler(quaternions);
             }
-            
+
             // Close to unlock.
             reader.close();
 
@@ -72,6 +76,11 @@ public class test {
 
     }
 
+    /*
+     * manager method for writing the turtlebot launch files method defines the xml
+     * file, calls the writing method (writeTurtlebots), and then writes the xml
+     * file
+     */
     private static void writeTurtlebotLaunch() {
         try {
             // create XML doc for turtlebot launch file
@@ -98,6 +107,11 @@ public class test {
     }
 
     /* TODO AMCL parameters --> http://wiki.ros.org/amcl#Parameters */
+    /*
+     * method that defines the elements and attributes of the xml file for the
+     * turtlebots writes the header, defines the tb pose arguments, and defines the
+     * tb namespaces
+     */
     private static void writeTurtlebots(int amt, String TURTLEBOT3_MODEL, double[][] initialPositions,
             double[][] initialOrientations) {
 
@@ -138,7 +152,7 @@ public class test {
                 root.appendChild(argElem);
                 index++;
             }
-
+            // attitude arg
             String[] attStr = new String[] { "pitch", "yaw", "roll" };
             index = 0;
             for (String s : attStr) {
