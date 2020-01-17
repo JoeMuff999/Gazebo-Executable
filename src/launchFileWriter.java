@@ -30,7 +30,39 @@ public class launchFileWriter {
         readUserParameters();
         writeTurtlebotLaunch();
         writeMapLaunch();
+        writeRViz();
         System.out.println("Launch files written successfully");
+    }
+
+    private static void writeRViz() {
+        try {
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(CURR_DIR + "/parameters.txt"), "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter (new FileOutputStream(CURR_DIR + "/launch/multi_nav_tb.rviz"), "UTF-8"));
+            
+            String[] lines = new String[382];
+            String line = null;
+            int index = 0;
+            while((line = reader.readLine()) != null)
+            {
+                lines[index] = reader.readLine();
+                index++;
+            }
+
+            //header section
+            for(int i = 0; i < 59; i++)
+            {
+                writer.write(lines[i]);
+            }
+            
+            reader.close();
+            writer.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /*

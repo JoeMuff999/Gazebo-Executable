@@ -1,1 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><launch><arg default="burger" doc="model type [burger, waffle, waffle_pi]" name="model"/><arg default="tb3_0" name="0_tb3"/><arg default="1.0" name="0_tb3_x_pos"/><arg default="1.0" name="0_tb3_y_pos"/><arg default="1.0" name="0_tb3_z_pos"/><arg default="-0.0" name="0_tb3_pitch"/><arg default="0.0" name="0_tb3_yaw"/><arg default="0.0" name="0_tb3_roll"/><arg default="tb3_1" name="1_tb3"/><arg default="3.0" name="1_tb3_x_pos"/><arg default="4.0" name="1_tb3_y_pos"/><arg default="1.0" name="1_tb3_z_pos"/><arg default="-0.0" name="1_tb3_pitch"/><arg default="2.498091544796509" name="1_tb3_yaw"/><arg default="0.0" name="1_tb3_roll"/><group ns="$(arg 0_tb3)"><param command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" name="robot_description"/><node name="robot_state_publisher" output="screen" pkg="robot_state_publisher" type="robot_state_publisher"><param name="publish_frequency" type="double" value="50.0"/><param name="tf_prefix" value="$(arg 0_tb3)"/></node><node args="-urdf -model $(arg 0_tb3) -x $(arg 0_tb3_x_pos) -y $(arg 0_tb3_y_pos) -z $(arg 0_tb3_z_pos) -P $(arg 0_tb3_pitch) -Y $(arg 0_tb3_yaw) -R $(arg 0_tb3_roll) -param robot_description" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"/></group><group ns="$(arg 1_tb3)"><param command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" name="robot_description"/><node name="robot_state_publisher" output="screen" pkg="robot_state_publisher" type="robot_state_publisher"><param name="publish_frequency" type="double" value="50.0"/><param name="tf_prefix" value="$(arg 1_tb3)"/></node><node args="-urdf -model $(arg 1_tb3) -x $(arg 1_tb3_x_pos) -y $(arg 1_tb3_y_pos) -z $(arg 1_tb3_z_pos) -P $(arg 1_tb3_pitch) -Y $(arg 1_tb3_yaw) -R $(arg 1_tb3_roll) -param robot_description" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"/></group></launch>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<launch>
+    <arg default="burger" doc="model type [burger, waffle, waffle_pi]" name="model" />
+    <arg default="tb3_0" name="0_tb3" />
+    <arg default="0.0" name="0_tb3_x_pos" />
+    <arg default="0.0" name="0_tb3_y_pos" />
+    <arg default="0.0" name="0_tb3_z_pos" />
+    <arg default="-0.0" name="0_tb3_pitch" />
+    <arg default="0.0" name="0_tb3_yaw" />
+    <arg default="0.0" name="0_tb3_roll" />
+    <arg default="tb3_1" name="1_tb3" />
+    <arg default="1.0" name="1_tb3_x_pos" />
+    <arg default="0.0" name="1_tb3_y_pos" />
+    <arg default="0.0" name="1_tb3_z_pos" />
+    <arg default="0.0" name="1_tb3_pitch" />
+    <arg default="0.0" name="1_tb3_yaw" />
+    <arg default="0.0" name="1_tb3_roll" />
+    <group ns="$(arg 0_tb3)">
+        <param command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" name="robot_description" />
+        <node name="robot_state_publisher" output="screen" pkg="robot_state_publisher" type="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" value="$(arg 0_tb3)" />
+        </node>
+        <node args="-urdf -model $(arg 0_tb3) -x $(arg 0_tb3_x_pos) -y $(arg 0_tb3_y_pos) -z $(arg 0_tb3_z_pos) -P $(arg 0_tb3_pitch) -Y $(arg 0_tb3_yaw) -R $(arg 0_tb3_roll) -param robot_description" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" />
+    </group>
+    <group ns="$(arg 1_tb3)">
+        <param command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" name="robot_description" />
+        <node name="robot_state_publisher" output="screen" pkg="robot_state_publisher" type="robot_state_publisher">
+            <param name="publish_frequency" type="double" value="50.0" />
+            <param name="tf_prefix" value="$(arg 1_tb3)" />
+        </node>
+        <node args="-urdf -model $(arg 1_tb3) -x $(arg 1_tb3_x_pos) -y $(arg 1_tb3_y_pos) -z $(arg 1_tb3_z_pos) -P $(arg 1_tb3_pitch) -Y $(arg 1_tb3_yaw) -R $(arg 1_tb3_roll) -param robot_description" name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" />
+    </group>
+</launch>

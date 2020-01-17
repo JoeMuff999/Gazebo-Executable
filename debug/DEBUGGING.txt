@@ -1,0 +1,2 @@
+Problems with AMCL and move_base.
+    -if you want the robots to share a map, you must remap map to /map in both the amcl and move_base 
