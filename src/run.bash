@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-java -cp ${PWD}/src launchFileWriter
 
+var=`java -cp launchFileWriter`
+echo "$var"
+echo "test"
 
-CURRDIR=${PWD}
-{
-gnome-terminal --execute roslaunch ${PWD}/launch/turtlebot_setup.launch
-gnome-terminal --execute roslaunch ${PWD}/launch/user_world.launch
-} &> /dev/null
+#CURRDIR=${PWD}
+#{
+#gnome-terminal --execute roslaunch ../launch/turtlebot_setup.launch
+#sleep 5
+#} &> /dev/null
+#{
+#gnome-terminal --execute roslaunch ../launch/user_world.launch
+
+#} &> /dev/null
