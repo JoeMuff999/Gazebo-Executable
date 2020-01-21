@@ -30,32 +30,269 @@ public class launchFileWriter {
         readUserParameters();
         writeTurtlebotLaunch();
         writeMapLaunch();
+        printTbInfo();
         writeRViz();
-        System.out.println("Launch files written successfully");
+        System.err.println("Launch files written successfully");
+    }
+
+    private static void printTbInfo() {
+        System.out.println(usr.tbAmt);
+        for (int i = 0; i < usr.tbAmt; i++) {
+            System.out.println(usr.pos[i][0] + " " + usr.pos[i][1] + " " + usr.pos[i][2]);
+        }
+        System.out.println(usr.occupancyGridDirectory);
     }
 
     private static void writeRViz() {
         try {
 
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(CURR_DIR + "/parameters.txt"), "UTF-8"));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter (new FileOutputStream(CURR_DIR + "/launch/multi_nav_tb.rviz"), "UTF-8"));
-            
-            String[] lines = new String[382];
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(CURR_DIR + "/templates/multi_nav_template.rviz"), "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(CURR_DIR + "/rviz/multi_nav_tb.rviz"), "UTF-8"));
+
+            String[] lines = new String[999];
             String line = null;
+            int indexOfRobotModels = 0;// block is 16 lines long
+            int indexOfTF = 0;
+            int indexOfScanTopic = 0;
+            int indexOfImageTopic = 0;
+            int indexOfMapTopic = 0;
+            int indexOfPathTopic = 0;
+            int indexOfGlobalMapTopic = 0;
+            int indexOfLocalMapTopic = 0;
+            int indexOfAmclTopic = 0;
+            int indexOfLocalCostmapTopic = 0;
+            int indexOfPoseTopic = 0;
+            int indexOfMassivePathTopic = 0;
+            int indexOfEndOfMassivePathTopic = 0;
+            int indexOfNavGoalTools = 0;
+            int indexOfEndOfTools = 0;
+            int indexOfEOF = 0;
             int index = 0;
-            while((line = reader.readLine()) != null)
-            {
-                lines[index] = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                lines[index] = line;
+                if (line.indexOf("rviz/RobotModel") != -1)
+                    indexOfRobotModels = index - 1;
+                if (line.indexOf("TF_PLACEHOLDER") != -1)
+                    indexOfTF = index + 1;
+                if (line.indexOf("SCAN_TOPIC_PLACEHOLDER") != -1)
+                    indexOfScanTopic = index + 1;
+                if (line.indexOf("IMAGE_TOPIC_PLACEHOLDER") != -1)
+                    indexOfImageTopic = index + 1;
+                if (line.indexOf("MAP_TOPIC_PLACEHOLDER") != -1)
+                    indexOfMapTopic = index + 1;
+                if (line.indexOf("PATH_TOPIC_PLACEHOLDER") != -1)
+                    indexOfPathTopic = index + 1;
+                if (line.indexOf("GLOBAL_MAP_TOPIC") != -1)
+                    indexOfGlobalMapTopic = index + 1;
+                if (line.indexOf("LOCAL_MAP_TOPIC") != -1)
+                    indexOfLocalMapTopic = index + 1;
+                if (line.indexOf("AMCL_TOPIC") != -1)
+                    indexOfAmclTopic = index + 1;
+                if (line.indexOf("LOCAL_COSTMAP_TOPIC") != -1)
+                    indexOfLocalCostmapTopic = index + 1;
+                if (line.indexOf("POSE_TOPIC") != -1)
+                    indexOfPoseTopic = index + 1;
+                if (line.indexOf("START_OF_MASSIVE_PATH_TOPIC") != -1)
+                    indexOfMassivePathTopic = index + 1;
+                if (line.indexOf("END_OF_MASSIVE_PATH_TOPIC") != -1)
+                    indexOfEndOfMassivePathTopic = index + 1;
+                if (line.indexOf("NAV_GOAL_TOOLS") != -1)
+                    indexOfNavGoalTools = index + 1;
+                if (line.indexOf("END_OF_TOOLS") != -1)
+                    indexOfEndOfTools = index + 1;
+                if (line.indexOf("EOF") != -1)
+                    indexOfEOF = index + 1;
                 index++;
             }
-
-            //header section
-            for(int i = 0; i < 59; i++)
-            {
+            // write everything up to first tb definition
+            for (int i = 0; i < indexOfRobotModels; i++) {
                 writer.write(lines[i]);
+                writer.write("\n");
+            }
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = 0; j < 16; j++) {
+                    String ln = lines[j + indexOfRobotModels];
+                    String placeholderTBNAME = "INSERT_TB_NAME_HERE";
+                    String placeholderRBDESC = "INSERT_TB_DESCRIPTION_HERE";
+                    String placeholderTFPREFIX = "INSERT_TF_PREFIX_HERE";
+
+                    int indexTBNAME = ln.indexOf(placeholderTBNAME);
+                    int indexRBDESC = ln.indexOf(placeholderRBDESC);
+                    int indexTFPREFIX = ln.indexOf(placeholderTFPREFIX);
+
+                    if (indexTBNAME != -1)
+                        ln = ln.substring(0, indexTBNAME) + "RobotModel_tb3_" + i
+                                + ln.substring(indexTBNAME + placeholderTBNAME.length());
+                    if (indexRBDESC != -1)
+                        ln = ln.substring(0, indexRBDESC) + "tb3_" + i + "/robot_description"
+                                + ln.substring(indexRBDESC + placeholderRBDESC.length());
+                    if (indexTFPREFIX != -1)
+                        ln = stringMaker(ln, "tb3_" + i, indexTFPREFIX, placeholderTFPREFIX);
+
+                    writer.write(ln);
+                    writer.write("\n");
+
+                }
+            }
+
+            writeBetweenIndices(writer, lines, indexOfTF, indexOfScanTopic - 1);
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfScanTopic; j < indexOfImageTopic - 1; j++) {
+                    String ln = lines[j];
+                    String placeholderSCANNAME = "INSERT_LASERSCAN_NAME";
+                    String placeholderSCANTOPIC = "INSERT_SCAN_TOPIC";
+
+                    int indexSCANNAME = ln.indexOf(placeholderSCANNAME);
+                    int indexSCANTOPIC = ln.indexOf(placeholderSCANTOPIC);
+
+                    if (indexSCANNAME != -1)
+                        ln = stringMaker(ln, "LaserScan_tb3_" + i, indexSCANNAME, placeholderSCANNAME);
+                    if (indexSCANTOPIC != -1)
+                        ln = stringMaker(ln, "/tb3_" + i + "/scan", indexSCANTOPIC, placeholderSCANTOPIC);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            writeBetweenIndices(writer, lines, indexOfMapTopic, indexOfPathTopic - 1);
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfPathTopic; j < indexOfGlobalMapTopic - 1; j++) {
+
+                    String ln = lines[j];
+                    String placeholderMOVEBASETOPIC = "INSERT_MOVE_BASE_TOPIC";
+
+                    int indexMOVEBASETOPIC = ln.indexOf(placeholderMOVEBASETOPIC);
+
+                    if (indexMOVEBASETOPIC != -1)
+                        ln = stringMaker(ln, "/tb3_" + i + "/move_base/NavfnROS/plan", indexMOVEBASETOPIC,
+                                placeholderMOVEBASETOPIC);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            writeBetweenIndices(writer, lines, indexOfGlobalMapTopic, indexOfAmclTopic - 1);
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfAmclTopic; j < indexOfLocalCostmapTopic - 1; j++) {
+                    // tb3_0/particlecloud
+                    String ln = lines[j];
+
+                    String placeholderPARTICLETOPIC = "INSERT_PARTICLE_TOPIC_HERE";
+                    String placeholderRVALUE = "INSERT_R_VALUE";
+
+                    int r_val = (int) (Math.random() * 256);
+
+                    int indexPARTICLETOPIC = ln.indexOf(placeholderPARTICLETOPIC);
+                    int indexRVALUE = ln.indexOf(placeholderRVALUE);
+
+                    if (indexPARTICLETOPIC != -1)
+                        ln = stringMaker(ln, "/tb3_" + i + "/particlecloud", indexPARTICLETOPIC,
+                                placeholderPARTICLETOPIC);
+                    if (indexRVALUE != -1)
+                        ln = stringMaker(ln, "" + r_val, indexRVALUE, placeholderRVALUE);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfLocalCostmapTopic; j < indexOfPoseTopic - 1; j++) {
+                    // tb3_1/move_base/local_costmap/footprint
+                    String ln = lines[j];
+
+                    String placeholderMBLCF = "INSERT_LOCAL_COSTMAP_FOOTPRINT";
+
+                    int indexMBLCF = ln.indexOf(placeholderMBLCF);
+
+                    if (indexMBLCF != -1)
+                        ln = stringMaker(ln, "tb3_" + i + "/move_base/local_costmap/footprint", indexMBLCF,
+                                placeholderMBLCF);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfPoseTopic; j < indexOfMassivePathTopic - 1; j++) {
+                    /// tb3_0/move_base_simple/goal
+                    String ln = lines[j];
+
+                    String placeholderMBNAME = "INSERT_NAME_OF_GOAL";
+                    String placeholderMBSIMPLEGOALTOPIC = "INSERT_MOVE_BASE_SIMPLE_GOAL_TOPIC";
+
+                    int indexMBNAME = ln.indexOf(placeholderMBNAME);
+                    int indexMBSIMPLEGOALTOPIC = ln.indexOf(placeholderMBSIMPLEGOALTOPIC);
+
+                    if (indexMBNAME != -1)
+                        ln = stringMaker(ln, "Goal_" + "tb3_" + i, indexMBNAME, placeholderMBNAME);
+                    if (indexMBSIMPLEGOALTOPIC != -1)
+                        ln = stringMaker(ln, "tb3_" + i + "/move_base_simple/goal", indexMBSIMPLEGOALTOPIC,
+                                placeholderMBSIMPLEGOALTOPIC);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            for (int i = 1; i < usr.tbAmt; i++) {
+                for (int j = indexOfMassivePathTopic; j < indexOfEndOfMassivePathTopic - 1; j++) {
+                    /// tb3_0/move_base_simple/goal
+                    String ln = lines[j];
+
+                    String placeholderPATHNAME = "INSERT_NAME_OF_PATH";
+                    String placeholderMBPLAN = "INSERT_MOVE__BASE_PLAN__";
+                    String placeholderMBPLANTOPIC = "INSERT_MOVE__BASE_PLAN_TOPIC";
+
+                    int indexPATHNAME = ln.indexOf(placeholderPATHNAME);
+                    int indexMBPLAN = ln.indexOf(placeholderMBPLAN);
+                    int indexMBPLANTOPIC = ln.indexOf(placeholderMBPLANTOPIC);
+
+                    if (indexPATHNAME != -1)
+                        ln = stringMaker(ln, "Path_" + "tb3_" + i, indexPATHNAME, placeholderPATHNAME);
+                    if (indexMBPLAN != -1)
+                        ln = stringMaker(ln, "tb3_" + i + "/move_base/NavfnROS/plan", indexMBPLAN, placeholderMBPLAN);
+                    if (indexMBPLANTOPIC != -1)
+                        ln = stringMaker(ln, "tb3_" + i + "/move_base/DWAPlannerROS/local_plan", indexMBPLANTOPIC,
+                                placeholderMBPLANTOPIC);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
+            }
+
+            writeBetweenIndices(writer, lines, indexOfEndOfMassivePathTopic, indexOfNavGoalTools - 1);
+
+            for (int i = 0; i < usr.tbAmt; i++) {
+                for (int j = indexOfNavGoalTools; j < indexOfEndOfTools - 1; j++) {
+                    /// tb3_0/move_base_simple/goal
+                    String ln = lines[j];
+
+                    String placeholderINITPOSE = "INSERT_INIT_POSE__TOPIC";
+                    String placeholderMBSIMPLEGOAL = "INSERT_SIMPLE__GOAL_TOPIC";
+
+                    int indexINITPOSE = ln.indexOf(placeholderINITPOSE);
+                    int indexMBSIMPLEGOAL = ln.indexOf(placeholderMBSIMPLEGOAL);
+
+                    if (indexINITPOSE != -1)
+                        ln = stringMaker(ln, "/tb3_" + i + "/initialpose", indexINITPOSE, placeholderINITPOSE);
+                    if (indexMBSIMPLEGOAL != -1)
+                        ln = stringMaker(ln, "/tb3_" + i + "/move_base_simple/goal", indexMBSIMPLEGOAL, placeholderMBSIMPLEGOAL);
+
+                    writer.write(ln);
+                    writer.write("\n");
+                }
             }
             
+            writeBetweenIndices(writer, lines, indexOfEndOfTools, indexOfEOF - 1);
             reader.close();
             writer.close();
 
@@ -63,6 +300,19 @@ public class launchFileWriter {
             e.printStackTrace();
         }
 
+    }
+
+    private static String stringMaker(String ln, String specific, int ind, String placeholder) {
+        return ln.substring(0, ind) + specific + ln.substring(ind + placeholder.length());
+    }
+
+    private static void writeBetweenIndices(BufferedWriter writer, String[] lines, int start, int finish)
+            throws IOException {
+        while (start < finish) {
+            writer.write(lines[start]);
+            start++;
+            writer.write("\n");
+        }
     }
 
     /*

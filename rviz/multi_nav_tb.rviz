@@ -55,13 +55,44 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-      Name: INSERT_TB_NAME_HERE
-      Robot Description: INSERT_TB_DESCRIPTION_HERE
-      TF Prefix: INSERT_TF_PREFIX_HERE
+      Name: RobotModel_tb3_0
+      Robot Description: tb3_0/robot_description
+      TF Prefix: tb3_0
       Update Interval: 0
       Value: true
       Visual Enabled: true
-      TF_PLACEHOLDER
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: RobotModel_tb3_1
+      Robot Description: tb3_1/robot_description
+      TF Prefix: tb3_1
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: RobotModel_tb3_2
+      Robot Description: tb3_2/robot_description
+      TF Prefix: tb3_2
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
     - Class: rviz/TF
       Enabled: false
       Frame Timeout: 15
@@ -76,7 +107,6 @@ Visualization Manager:
         {}
       Update Interval: 0
       Value: false
-      SCAN_TOPIC_PLACEHOLDER
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -95,32 +125,78 @@ Visualization Manager:
       Max Intensity: 13069
       Min Color: 0; 0; 0
       Min Intensity: 28
-      Name: INSERT_LASERSCAN_NAME
+      Name: LaserScan_tb3_0
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.030000001192092896
       Style: Flat Squares
-      Topic: INSERT_SCAN_TOPIC
+      Topic: /tb3_0/scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-      IMAGE_TOPIC_PLACEHOLDER
-    - Class: rviz/Image
-      Enabled: false
-      Image Topic: /raspicam_node/image
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: compressed
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 0; 255; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 13069
+      Min Color: 0; 0; 0
+      Min Intensity: 28
+      Name: LaserScan_tb3_1
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.030000001192092896
+      Style: Flat Squares
+      Topic: /tb3_1/scan
       Unreliable: false
-      Value: false
-      MAP_TOPIC_PLACEHOLDER
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 0; 255; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 13069
+      Min Color: 0; 0; 0
+      Min Intensity: 28
+      Name: LaserScan_tb3_2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.030000001192092896
+      Style: Flat Squares
+      Topic: /tb3_2/scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
     - Alpha: 0.699999988079071
       Class: rviz/Map
       Color Scheme: map
@@ -131,7 +207,6 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: false
       Value: true
-      PATH_TOPIC_PLACEHOLDER
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -152,10 +227,55 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: INSERT_MOVE_BASE_TOPIC
+      Topic: /tb3_0/move_base/NavfnROS/plan
       Unreliable: false
       Value: true
-      GLOBAL_MAP_TOPIC
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 0; 0; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Planner Plan
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /tb3_1/move_base/NavfnROS/plan
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 0; 0; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Planner Plan
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /tb3_2/move_base/NavfnROS/plan
+      Unreliable: false
+      Value: true
     - Class: rviz/Group
       Displays:
         - Alpha: 0.699999988079071
@@ -238,13 +358,12 @@ Visualization Manager:
           Value: true
       Enabled: true
       Name: Local Map
-      AMCL_TOPIC
     - Alpha: 1
       Arrow Length: 0.05000000074505806
       Axes Length: 0.30000001192092896
       Axes Radius: 0.009999999776482582
       Class: rviz/PoseArray
-      Color: INSERT_R_VALUE; 192; 0
+      Color: 238; 192; 0
       Enabled: true
       Head Length: 0.07000000029802322
       Head Radius: 0.029999999329447746
@@ -252,19 +371,65 @@ Visualization Manager:
       Shaft Length: 0.23000000417232513
       Shaft Radius: 0.009999999776482582
       Shape: Arrow (Flat)
-      Topic: INSERT_PARTICLE_TOPIC_HERE
+      Topic: /tb3_0/particlecloud
       Unreliable: false
       Value: true
-      LOCAL_COSTMAP_TOPIC
+    - Alpha: 1
+      Arrow Length: 0.05000000074505806
+      Axes Length: 0.30000001192092896
+      Axes Radius: 0.009999999776482582
+      Class: rviz/PoseArray
+      Color: 163; 192; 0
+      Enabled: true
+      Head Length: 0.07000000029802322
+      Head Radius: 0.029999999329447746
+      Name: Amcl Particles
+      Shaft Length: 0.23000000417232513
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow (Flat)
+      Topic: /tb3_1/particlecloud
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Arrow Length: 0.05000000074505806
+      Axes Length: 0.30000001192092896
+      Axes Radius: 0.009999999776482582
+      Class: rviz/PoseArray
+      Color: 94; 192; 0
+      Enabled: true
+      Head Length: 0.07000000029802322
+      Head Radius: 0.029999999329447746
+      Name: Amcl Particles
+      Shaft Length: 0.23000000417232513
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow (Flat)
+      Topic: /tb3_2/particlecloud
+      Unreliable: false
+      Value: true
     - Alpha: 1
       Class: rviz/Polygon
       Color: 25; 255; 0
       Enabled: true
       Name: Polygon
-      Topic: INSERT_LOCAL_COSTMAP_FOOTPRINT
+      Topic: tb3_0/move_base/local_costmap/footprint
       Unreliable: false
       Value: true
-      POSE_TOPIC
+    - Alpha: 1
+      Class: rviz/Polygon
+      Color: 25; 255; 0
+      Enabled: true
+      Name: Polygon
+      Topic: tb3_1/move_base/local_costmap/footprint
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Class: rviz/Polygon
+      Color: 25; 255; 0
+      Enabled: true
+      Name: Polygon
+      Topic: tb3_2/move_base/local_costmap/footprint
+      Unreliable: false
+      Value: true
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
@@ -273,14 +438,43 @@ Visualization Manager:
       Enabled: true
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
-      Name: INSERT_NAME_OF_GOAL
+      Name: Goal_tb3_0
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: INSERT_MOVE_BASE_SIMPLE_GOAL_TOPIC
+      Topic: tb3_0/move_base_simple/goal
       Unreliable: false
       Value: true
-      START_OF_MASSIVE_PATH_TOPIC
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Goal_tb3_1
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: tb3_1/move_base_simple/goal
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Goal_tb3_2
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: tb3_2/move_base_simple/goal
+      Unreliable: false
+      Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
@@ -291,7 +485,7 @@ Visualization Manager:
       Length: 0.30000001192092896
       Line Style: Lines
       Line Width: 0.029999999329447746
-      Name: INSERT_NAME_OF_PATH
+      Name: Path_tb3_1
       Offset:
         X: 0
         Y: 0
@@ -301,7 +495,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: INSERT_MOVE__BASE_PLAN__
+      Topic: tb3_1/move_base/NavfnROS/plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -324,10 +518,55 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: INSERT_MOVE__BASE_PLAN_TOPIC
+      Topic: tb3_1/move_base/DWAPlannerROS/local_plan
       Unreliable: false
       Value: true
-      END_OF_MASSIVE_PATH_TOPIC
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 0; 0; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path_tb3_2
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: tb3_2/move_base/NavfnROS/plan
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: tb3_2/move_base/DWAPlannerROS/local_plan
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -340,15 +579,27 @@ Visualization Manager:
     - Class: rviz/Interact
       Hide Inactive Objects: true
     - Class: rviz/Select
-    NAV_GOAL_TOOLS
     - Class: rviz/SetInitialPose
       Theta std deviation: 0.2617993950843811
-      Topic: INSERT_INIT_POSE__TOPIC
+      Topic: /tb3_0/initialpose
       X std deviation: 0.5
       Y std deviation: 0.5
     - Class: rviz/SetGoal
-      Topic: INSERT_SIMPLE__GOAL_TOPIC
-    END_OF_TOOLS
+      Topic: /tb3_0/move_base_simple/goal
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /tb3_1/initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: /tb3_1/move_base_simple/goal
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /tb3_2/initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: /tb3_2/move_base_simple/goal
     - Class: rviz/Measure
   Value: true
   Views:
@@ -389,4 +640,3 @@ Window Geometry:
   Width: 1307
   X: 59
   Y: 27
-  EOF
